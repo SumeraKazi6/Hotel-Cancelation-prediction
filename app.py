@@ -5,12 +5,21 @@ from pathlib import Path
 
 st.set_page_config(page_title="Hotel Cancellation Predictor", page_icon="🏨", layout="wide")
 
+import urllib.request
+import shutil
+
 MODEL_PATH = Path(__file__).parent / "hotel_cancellation_model.pkl"
+
+MODEL_URL = "https://github.com/SumeraKazi6/Hotel-Cancelation-prediction/releases/download/v1.0/hotel_cancellation_model.pkl"
 
 @st.cache_resource
 def load_model():
+
     if not MODEL_PATH.exists():
-        return None
+        with urllib.request.urlopen(MODEL_URL, timeout=600) as response:
+            with open(MODEL_PATH, "wb") as file:
+                shutil.copyfileobj(response, file)
+
     return joblib.load(MODEL_PATH)
 
 model = load_model()
